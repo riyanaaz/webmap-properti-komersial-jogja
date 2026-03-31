@@ -156,9 +156,36 @@ legend.onAdd = function (map) {
 };
 legend.addTo(map);
 
-// script untuk filter titik di map berdasarkan inputan user
+// ==========================================
+// SCRIPT FILTER & TOMBOL RESET PENCARIAN
+// ==========================================
 const inputJalan = document.getElementById('searchJalan');
 const inputJenis = document.getElementById('searchJenis');
+const btnClearJalan = document.getElementById('clearJalan');
+const btnClearJenis = document.getElementById('clearJenis');
+
+// Fungsi untuk memunculkan/menyembunyikan tombol silang (reset)
+function updateClearButtons() {
+    if(btnClearJalan) btnClearJalan.style.display = inputJalan.value.trim() !== '' ? 'block' : 'none';
+    if(btnClearJenis) btnClearJenis.style.display = inputJenis.value.trim() !== '' ? 'block' : 'none';
+}
+
+// Aksi ketika tombol silang diklik (Reset Input & Peta)
+if (btnClearJalan) {
+    btnClearJalan.addEventListener('click', () => {
+        inputJalan.value = '';
+        updateClearButtons();
+        filterMap();
+    });
+}
+
+if (btnClearJenis) {
+    btnClearJenis.addEventListener('click', () => {
+        inputJenis.value = '';
+        updateClearButtons();
+        filterMap();
+    });
+}
 
 function filterMap() {
     const queryJalan = inputJalan.value.toLowerCase().trim();
@@ -247,6 +274,7 @@ function setupDropdown(inputId, dropdownId, type, iconClass) {
             div.addEventListener('mousedown', function() { 
                 input.value = item;
                 dropdown.style.display = 'none';
+                updateClearButtons(); // Menampilkan tombol silang jika ada isinya
                 filterMap(); 
             });
             
@@ -258,6 +286,7 @@ function setupDropdown(inputId, dropdownId, type, iconClass) {
 
     input.addEventListener('input', () => {
         renderList(input.value);
+        updateClearButtons(); // Cek tombol silang setiap kali ngetik
         filterMap(); 
     });
 
