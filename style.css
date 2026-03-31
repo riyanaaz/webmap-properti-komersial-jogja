@@ -4,8 +4,25 @@
     --light-red: rgba(153, 0, 0, 0.1);
 }
 
-body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; }
-#map { width: 100%; height: 100vh; z-index: 1; }
+body, html { 
+    margin: 0; 
+    padding: 0; 
+    height: 100%; 
+    width: 100%;
+    overflow: hidden; /* INI KUNCI 1: Mematikan scroll halaman secara paksa */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    background-color: #f4f7f6; 
+}
+
+#map { 
+    width: 100%; 
+    height: 100vh; /* Fallback untuk browser lama */
+    height: 100dvh; /* INI KUNCI 2: Dynamic Viewport, otomatis menyesuaikan address bar HP */
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1; 
+}
 
 /* styling buat search bar melayang */
 .search-panel {
@@ -312,4 +329,31 @@ body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahom
     /* 4. Pop-up Peta */
     .popup-custom { width: 200px; }
     .popup-img-container { height: 120px; }
+}
+
+/* Mengatur agar tombol zoom Leaflet berada di atas tombol Panduan */
+.leaflet-bottom.leaflet-left {
+    margin-bottom: 70px; /* Memberi ruang agar zoom naik ke atas tombol Panduan */
+    margin-left: 10px;
+}
+
+/* Pastikan tombol panduan tetap di posisinya */
+.btn-help {
+    position: absolute; 
+    bottom: 25px; 
+    left: 15px; 
+    z-index: 1000;
+    /* ... sisa kode btn-help lainnya ... */
+}
+
+/* Penyesuaian untuk layar HP */
+@media screen and (max-width: 768px) {
+    .leaflet-bottom.leaflet-left {
+        margin-bottom: 75px; /* Sedikit lebih tinggi di HP agar tidak mepet */
+    }
+    
+    .btn-help {
+        bottom: 25px;
+        left: 10px;
+    }
 }
