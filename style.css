@@ -9,7 +9,7 @@ body, html {
     padding: 0; 
     height: 100%; 
     width: 100%;
-    overflow: hidden; /* INI KUNCI 1: Mematikan scroll halaman secara paksa */
+    overflow: hidden; /* Mematikan scroll halaman secara paksa */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     background-color: #f4f7f6; 
 }
@@ -17,7 +17,7 @@ body, html {
 #map { 
     width: 100%; 
     height: 100vh; /* Fallback untuk browser lama */
-    height: 100dvh; /* INI KUNCI 2: Dynamic Viewport, otomatis menyesuaikan address bar HP */
+    height: 100dvh; /* Dynamic Viewport untuk HP */
     position: absolute;
     top: 0;
     left: 0;
@@ -44,21 +44,30 @@ body, html {
 
 .search-box:focus-within { background: #fff; border-color: var(--primary-red); box-shadow: 0 0 0 3px var(--light-red); }
 .search-box i.fa-map-marker-alt, .search-box i.fa-building { color: var(--primary-red); font-size: 14px; margin-right: 8px; }
-.search-box input { border: none; background: transparent; outline: none; font-size: 13px; width: 100%; color: #333; font-weight: 500; }
-.divider { width: 1px; height: 25px; background-color: #ddd; }
 
-/* Desain Tombol Reset (Silang) di Search Box */
+/* Penyesuaian input agar teks tidak menabrak tombol silang */
+.search-box input { 
+    border: none; background: transparent; outline: none; font-size: 13px; 
+    width: 100%; color: #333; font-weight: 500;
+    padding-right: 20px; /* Jarak aman agar teks tidak tertutup ikon X */
+    box-sizing: border-box;
+}
+
+/* Desain Tombol Reset (Silang) yang Diperbaiki */
 .clear-btn {
-    color: #aaa;
+    position: absolute; /* Dipaku di kanan agar tidak hilang ditekan elemen lain */
+    right: 10px;
+    color: #999;
     font-size: 14px;
     cursor: pointer;
     padding: 4px;
-    display: none; /* Disembunyikan secara default saat kotak kosong */
+    display: none; 
     transition: 0.2s ease;
+    z-index: 10; /* Berada di atas input text */
 }
-.clear-btn:hover {
-    color: var(--primary-red);
-}
+.clear-btn:hover { color: var(--primary-red); }
+
+.divider { width: 1px; height: 25px; background-color: #ddd; }
 
 /* custom dropdown hasil search biar rapi */
 .custom-dropdown {
@@ -100,23 +109,14 @@ body, html {
 .dropdown-text { flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
 
 /* custom pop-up & marker map */
-.popup-custom { 
-    text-align: center; font-family: 'Segoe UI', sans-serif; 
-    width: 250px; padding: 4px; 
-}
-
+.popup-custom { text-align: center; font-family: 'Segoe UI', sans-serif; width: 250px; padding: 4px; }
 .popup-img-container {
     width: 100%; height: 140px; 
     background-color: #f1f3f4; border-radius: 6px; margin-bottom: 6px;
     display: flex; justify-content: center; align-items: center;
     overflow: hidden; box-shadow: 0 3px 8px rgba(0,0,0,0.15); 
 }
-
-.popup-img { 
-    max-width: 100%; max-height: 100%; object-fit: contain; 
-    cursor: zoom-in;
-    transition: transform 0.3s ease;
-}
+.popup-img { max-width: 100%; max-height: 100%; object-fit: contain; cursor: zoom-in; transition: transform 0.3s ease; }
 .popup-img:hover { transform: scale(1.05); } 
 
 .attribute-key { font-size: 11px; font-weight: 700; color: #555; padding: 3px 0; width: 45%; text-align: left; }
@@ -125,12 +125,11 @@ body, html {
 .marker-properti {
     background-color: #ffffff; border: 2px solid var(--primary-red); border-radius: 50%; 
     color: var(--primary-red); display: flex; justify-content: center; align-items: center;
-    font-size: 9px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
-    transition: all 0.2s ease;
+    font-size: 9px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: all 0.2s ease;
 }
 .marker-properti:hover { transform: scale(1.3); background-color: var(--primary-red); color: #ffffff; z-index: 1000 !important; }
 
-/* box legenda di pojok kanan bawah */
+/* box legenda */
 .info.legend {
     padding: 10px 15px; font-family: 'Segoe UI', sans-serif;
     background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
@@ -159,7 +158,7 @@ body, html {
     border-radius: 16px; 
     width: 450px;
     max-width: 95%; 
-    overflow: hidden; /* Scrollbar dimatikan untuk laptop */
+    overflow: hidden; 
     box-sizing: border-box; 
     box-shadow: 0 15px 40px rgba(0,0,0,0.3);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -169,66 +168,58 @@ body, html {
 @keyframes popIn { 0% { transform: scale(0.9) translateY(10px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
 
 .modal-title {
-    text-align: center; margin-top: 0; font-size: 18px; margin-bottom: 15px; 
+    text-align: center; margin-top: 0; font-size: 18px; margin-bottom: 12px; 
     font-weight: 800; color: #222; line-height: 1.2;
 }
 
 /* =========================================
    DESAIN BARU PANDUAN (MODERN UI)
 ========================================= */
+
+/* PERBAIKAN: SUB JUDUL DIBUAT JAUH BERBEDA DARI JUDUL UTAMA */
 .panduan-header {
-    font-size: 15px; font-weight: 800; color: #222; 
-    margin-bottom: 12px; border-bottom: 2px solid #f1f3f4; padding-bottom: 8px;
+    font-size: 11px; 
+    font-weight: 700; 
+    color: #888; /* Warna abu-abu */
+    text-transform: uppercase; /* Huruf KAPITAL semua */
+    letter-spacing: 1px; /* Jarak antar huruf dilebarkan */
+    margin-bottom: 10px; 
+    border-bottom: 1px solid #f1f3f4; 
+    padding-bottom: 6px;
     text-align: center;
 }
 
-.panduan-list { 
-    display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; 
-}
+.panduan-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
 
 .panduan-item {
     display: flex; 
     flex-direction: row; 
     align-items: center; 
     background: #ffffff; 
-    padding: 12px; 
+    padding: 10px 12px; 
     border-radius: 12px; 
     border: 1px solid #e0e0e0; 
     box-shadow: 0 2px 6px rgba(0,0,0,0.02); 
     transition: all 0.2s;
 }
 
-.panduan-item:hover { 
-    background: #f9f9f9; 
-    border-color: #d0d0d0;
-    transform: translateY(-1px);
-}
+.panduan-item:hover { background: #f9f9f9; border-color: #d0d0d0; transform: translateY(-1px); }
 
-/* Desain kotak ikon modern (lingkaran merah lembut) */
 .icon-wrapper {
-    background: var(--light-red);
-    color: var(--primary-red);
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0; 
-    margin-right: 12px;
+    background: var(--light-red); color: var(--primary-red);
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    flex-shrink: 0; margin-right: 12px;
 }
-.icon-wrapper i { font-size: 16px; margin: 0; }
+.icon-wrapper i { font-size: 15px; margin: 0; }
 
-/* Desain khusus untuk kotak peringatan (Kuning) */
 .panduan-item.warning-box { background-color: #fffdf5; border-color: #ffe082; }
 .icon-wrapper.warning-icon { background: #fff3e0; color: #f57f17; }
 
-/* Perbaikan Tipografi (Teks) */
-.panduan-text { font-size: 12px; color: #444; line-height: 1.4; text-align: left; }
-.panduan-text strong { color: #222; font-size: 13px; display: block; margin-bottom: 2px; }
+.panduan-text { font-size: 12px; color: #444; line-height: 1.35; text-align: left; }
+.panduan-text strong, .panduan-text b { color: #222; font-size: 13px; display: block; margin-bottom: 2px; }
 .warning-box .panduan-text strong { color: #e65100; }
 
-/* Tombol */
 .btn-start {
     background: var(--primary-red); color: white; border: none; 
     padding: 10px 20px; font-size: 13px; font-weight: 700;
@@ -237,25 +228,20 @@ body, html {
 }
 .btn-start:hover { background: var(--hover-red); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(153, 0, 0, 0.35); }
 
-/* Mengatur agar tombol zoom Leaflet berada di atas tombol Panduan */
-.leaflet-bottom.leaflet-left {
-    margin-bottom: 70px; 
-    margin-left: 10px;
-}
+/* Kontrol Leaflet */
+.leaflet-bottom.leaflet-left { margin-bottom: 70px; margin-left: 10px; }
 
 .btn-help {
     position: absolute; bottom: 25px; left: 15px; z-index: 1000;
     background: white; border: none; color: var(--primary-red);
-    padding: 10px 20px; 
-    border-radius: 30px; 
-    font-size: 14px; font-weight: 700; font-family: 'Segoe UI', sans-serif;
+    padding: 10px 20px; border-radius: 30px; font-size: 14px; font-weight: 700; 
     display: flex; gap: 8px; justify-content: center; align-items: center;
     cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: 0.3s;
 }
 .btn-help i { font-size: 18px; }
 .btn-help:hover { transform: translateY(-3px); background: var(--primary-red); color: white; box-shadow: 0 6px 15px rgba(153,0,0,0.3); }
 
-/* lightbox buat pas foto di-klik */
+/* lightbox foto */
 .image-lightbox-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.85); z-index: 3000; 
@@ -264,17 +250,13 @@ body, html {
     opacity: 0; transition: opacity 0.3s ease;
 }
 .image-lightbox-content {
-    max-width: 90%; max-height: 90vh;
-    border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    object-fit: contain; cursor: zoom-out;
-    transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    max-width: 90%; max-height: 90vh; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    object-fit: contain; cursor: zoom-out; transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .image-lightbox-overlay.show-lightbox { opacity: 1; display: flex; }
 .image-lightbox-overlay.show-lightbox .image-lightbox-content { transform: scale(1); }
-
 .image-lightbox-close {
-    position: absolute; top: 20px; right: 30px;
-    color: white; font-size: 40px; font-weight: 300; font-family: sans-serif;
+    position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; font-weight: 300; 
     cursor: pointer; transition: 0.2s; text-shadow: 0 2px 5px rgba(0,0,0,0.5);
 }
 .image-lightbox-close:hover { color: #ff6b6b; transform: scale(1.1); }
@@ -283,74 +265,55 @@ body, html {
    RESPONSIVE DESIGN (UNTUK LAYAR HP & TABLET)
 ======================================================= */
 @media screen and (max-width: 768px) {
-    /* 1. Modal: Disesuaikan biar tidak nabrak poni atas dan bawah */
+    /* PERBAIKAN IPHONE: Memadatkan ukuran agar muat 100% tanpa di-scroll */
     .modal-content { 
-        width: 90%; 
-        padding: 15px; 
-        max-height: 75vh; 
-        overflow-y: auto; /* NYALAKAN KEMBALI agar tombol di bawah tetap bisa dijangkau */
+        width: 92%; 
+        padding: 12px 16px; /* Padding dikurangi agar hemat tempat vertikal */
+        max-height: 90vh; 
+        overflow: hidden; /* Scrollbar dimatikan total */
     }
     
-    /* Bikin scrollbar tipis di dalam modal khusus HP */
-    .modal-content::-webkit-scrollbar { width: 4px; display: block; }
-    .modal-content::-webkit-scrollbar-track { background: transparent; margin: 10px 0; }
-    .modal-content::-webkit-scrollbar-thumb { background: #dcdcdc; border-radius: 10px; }
-
-    /* Kecilkan ukuran elemen di dalam modal */
-    .modal-title { font-size: 16px; margin-bottom: 10px; line-height: 1.2; }
+    .modal-title { font-size: 15px; margin-bottom: 8px; line-height: 1.2; }
+    .panduan-header { margin-bottom: 8px; padding-bottom: 4px; font-size: 10px; }
     
-    /* Sesuaikan panduan item agar pas di HP */
-    .panduan-item { padding: 10px; }
-    .icon-wrapper { width: 32px; height: 32px; margin-right: 10px; }
-    .icon-wrapper i { font-size: 14px; }
-    .panduan-text { font-size: 11px; }
-    .panduan-text strong { font-size: 12px; }
+    .panduan-list { gap: 6px; margin-bottom: 10px; }
+    .panduan-item { padding: 8px; border-radius: 10px; }
+    
+    .icon-wrapper { width: 28px; height: 28px; margin-right: 8px; }
+    .icon-wrapper i { font-size: 12px; }
+    
+    .panduan-text { font-size: 10.5px; line-height: 1.25; }
+    .panduan-text strong, .panduan-text b { font-size: 11px; margin-bottom: 1px; }
 
-    .btn-start { padding: 12px; font-size: 13px; margin-top: 5px; }
+    .btn-start { padding: 10px; font-size: 12px; margin-top: 0; }
 
-    /* 2. Search Bar: Disesuaikan dan cegah bug iPhone */
+    /* Search Bar & Reset Button */
     .search-panel { 
-        top: 15px; 
-        width: 92%; 
-        max-width: 350px; 
-        flex-direction: column; 
-        padding: 10px; 
-        gap: 8px; 
-        border-radius: 12px; 
+        top: 15px; width: 92%; max-width: 350px; flex-direction: column; 
+        padding: 10px; gap: 8px; border-radius: 12px; 
     }
     .search-box { width: 100%; box-sizing: border-box; padding: 6px 10px; }
     
-    /* PENTING DI iOS: Ukuran font input WAJIB 16px agar tidak auto-zoom! */
-    .search-box input { font-size: 16px; } 
-    .search-box i { font-size: 16px; }
+    /* Ukuran font input WAJIB 16px untuk mencegah iPhone auto-zoom */
+    .search-box input { font-size: 16px; padding-right: 20px; } 
+    .search-box i.fa-map-marker-alt, .search-box i.fa-building { font-size: 16px; }
+    
+    .clear-btn { font-size: 16px; right: 12px; } /* Pastikan X button besar cukup untuk ditekan jari */
+    
     .divider { width: 100%; height: 1px; }
     .custom-dropdown { max-height: 180px; }
 
-    /* 3. Legenda & Tombol Panduan */
-    .info.legend { 
-        padding: 8px 10px; 
-        border-radius: 8px;
-        margin-bottom: 25px; 
-        margin-right: 10px;
-    }
+    /* Legenda & Panduan */
+    .info.legend { padding: 8px 10px; border-radius: 8px; margin-bottom: 25px; margin-right: 10px; }
     .legend h4 { font-size: 12px; margin-bottom: 5px; padding-bottom: 4px; }
     .legend-item { font-size: 10px; margin-bottom: 4px; }
     .legend-icon-properti { width: 12px; height: 12px; font-size: 6px; }
 
-    .btn-help { 
-        bottom: 25px; 
-        left: 10px; 
-        padding: 8px 12px; 
-        font-size: 12px; 
-    }
+    .btn-help { bottom: 25px; left: 10px; padding: 8px 12px; font-size: 12px; }
 
-    /* 4. Pop-up Peta */
+    /* Pop-up Peta */
     .popup-custom { width: 200px; }
     .popup-img-container { height: 120px; }
 
-    /* 5. Tombol Zoom Leaflet */
-    .leaflet-bottom.leaflet-left {
-        margin-bottom: 70px; 
-        margin-left: 10px;
-    }
+    .leaflet-bottom.leaflet-left { margin-bottom: 70px; margin-left: 10px; }
 }
