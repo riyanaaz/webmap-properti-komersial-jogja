@@ -43,7 +43,13 @@ body, html {
 }
 
 .search-box:focus-within { background: #fff; border-color: var(--primary-red); box-shadow: 0 0 0 3px var(--light-red); }
-.search-box i.fa-map-marker-alt, .search-box i.fa-store { color: var(--primary-red); font-size: 14px; margin-right: 8px; }
+.search-box i.fa-map-marker-alt, .search-box i.fa-store { 
+    color: var(--primary-red); 
+    font-size: 14px; 
+    margin-right: 8px; 
+    width: 16px; 
+    text-align: center; 
+}
 
 /* Penyesuaian input agar teks tidak menabrak tombol silang */
 .search-box input { 
@@ -346,8 +352,13 @@ body, html {
         padding-right: 20px; 
         margin: 0; 
     } 
-    .search-box i.fa-map-marker-alt, .search-box i.fa-building { 
-        font-size: 14px; /* Icon diperkecil sedikit */
+    .search-box i.fa-map-marker-alt, .search-box i.fa-store { 
+        color: var(--primary-red); 
+        font-size: 14px; 
+        margin-right: 8px; 
+        /* Tambahkan dua baris ini agar ikon dan teksnya sejajar lurus: */
+        width: 16px; 
+        text-align: center;
     }
     
     .clear-btn { font-size: 14px; right: 10px; }
