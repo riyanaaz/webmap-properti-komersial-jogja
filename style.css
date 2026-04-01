@@ -144,7 +144,7 @@ body, html {
     display: flex; justify-content: center; align-items: center;
     font-size: 6px; 
     box-shadow: 0 1px 3px rgba(0,0,0,0.3); 
-    transition: transform 0.1s ease-out, background-color 0.2s ease; /* Transisi dipercepat biar zoom-nya mulus */
+    transition: background-color 0.2s ease; /* Transisi dipercepat biar zoom-nya mulus */
 }
 
 /* Saat disentuh atau didekati kursor */
@@ -155,6 +155,7 @@ body, html {
     color: #ffffff; 
     z-index: 1000 !important; 
     cursor: pointer;
+    transition: transform 0.1s ease-out, background-color 0.2s ease;
 }
 
 /* box legenda */
