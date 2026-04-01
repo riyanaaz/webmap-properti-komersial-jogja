@@ -122,12 +122,40 @@ body, html {
 .attribute-key { font-size: 11px; font-weight: 700; color: #555; padding: 3px 0; width: 45%; text-align: left; }
 .attribute-value { font-size: 11px; color: #333; padding: 3px 0; text-align: right; }
 
-.marker-properti {
-    background-color: #ffffff; border: 1px solid var(--primary-red); border-radius: 50%; 
-    color: var(--primary-red); display: flex; justify-content: center; align-items: center;
-    font-size: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: all 0.2s ease;
+/* Hilangkan background bawaan Leaflet (opsional untuk jaga-jaga) */
+.marker-wrapper {
+    background: transparent; border: none;
 }
-.marker-properti:hover { transform: scale(1.6); background-color: var(--primary-red); color: #ffffff; z-index: 1000 !important; }
+
+/* Desain lingkaran markernya */
+.marker-properti {
+    position: absolute;
+    top: 0; 
+    left: 0;
+    /* Ini rahasianya: Tetap di tengah (translate), tapi ukurannya ngikutin variabel zoom (scale) */
+    transform: translate(-50%, -50%) scale(var(--icon-scale, 1));
+    transform-origin: center center;
+    width: 14px; /* Ukuran dasar saat zoom 14 */
+    height: 14px;
+    background-color: #ffffff; 
+    border: 1px solid var(--primary-red); 
+    border-radius: 50%; 
+    color: var(--primary-red); 
+    display: flex; justify-content: center; align-items: center;
+    font-size: 6px; 
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3); 
+    transition: transform 0.1s ease-out, background-color 0.2s ease; /* Transisi dipercepat biar zoom-nya mulus */
+}
+
+/* Saat disentuh atau didekati kursor */
+.marker-properti:hover { 
+    /* Skala saat ini ditambah 0.6 supaya terlihat membesar dari aslinya */
+    transform: translate(-50%, -50%) scale(calc(var(--icon-scale, 1) + 0.6)); 
+    background-color: var(--primary-red); 
+    color: #ffffff; 
+    z-index: 1000 !important; 
+    cursor: pointer;
+}
 
 /* box legenda */
 .info.legend {
