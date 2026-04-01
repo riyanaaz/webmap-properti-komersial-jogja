@@ -98,7 +98,7 @@ async function loadMapData() {
             propertiLayer = L.geoJSON(propertiGeoJSON, {
                 pointToLayer: function (feature, latlng) {
                     // custom icon marker jadi bulet merah
-                    let iconProperti = L.divIcon({ className: 'marker-properti', html: '<div class="marker-properti"><i class="fas fa-building"></i></div>', iconSize: [0, 0], iconAnchor: [0, 0]});
+                    let iconProperti = L.divIcon({ className: 'marker-properti', html: '<div class="marker-properti"><i class="fas fa-store"></i></div>', iconSize: [0, 0], iconAnchor: [0, 0]});
                     return L.marker(latlng, { icon: iconProperti });
                 },
                 onEachFeature: function (feature, layer) {
