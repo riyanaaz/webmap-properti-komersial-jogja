@@ -45,7 +45,7 @@ let propertiLayer;
 let allMarkers = []; // array ini buat nampung semua titik biar gampang difilter nanti
 
 // Fungsi untuk mengubah ukuran icon saat di-zoom
-map.on('zoom', function() {
+map.on('zoomend', function() {
     var zoom = map.getZoom();
     
     // Rumus skala: Anggap zoom 14 adalah ukuran normal (scale 1)
@@ -61,7 +61,7 @@ map.on('zoom', function() {
 });
 
 // Panggil fungsi sekali saat peta pertama dimuat agar ukurannya langsung menyesuaikan
-map.fire('zoom');
+map.fire('zoomend');
 
 // ngerapiin nama field dari atribut geojson biar enak dibaca di popup
 const aliasField = {
