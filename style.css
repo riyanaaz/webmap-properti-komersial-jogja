@@ -43,7 +43,7 @@ body, html {
 }
 
 .search-box:focus-within { background: #fff; border-color: var(--primary-red); box-shadow: 0 0 0 3px var(--light-red); }
-.search-box i.fa-map-marker-alt, .search-box i.fa-building { color: var(--primary-red); font-size: 14px; margin-right: 8px; }
+.search-box i.fa-map-marker-alt, .search-box i.fa-store { color: var(--primary-red); font-size: 14px; margin-right: 8px; }
 
 /* Penyesuaian input agar teks tidak menabrak tombol silang */
 .search-box input { 
