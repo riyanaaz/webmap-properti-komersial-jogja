@@ -43,6 +43,9 @@ L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
 
 let propertiLayer; 
 let allMarkers = []; // array ini buat nampung semua titik biar gampang difilter nanti
+let propertiLayer; 
+let allMarkers = [];
+let clusterGroup; // TAMBAHAN: Variabel penampung cluster
 
 // Fungsi untuk mengubah ukuran icon saat di-zoom
 map.on('zoomend', function() {
@@ -95,32 +98,51 @@ async function loadMapData() {
         if (propertiRes.ok) {
             const propertiGeoJSON = await propertiRes.json();
             
+            // TAMBAHAN: Inisialisasi grup marker cluster
+            clusterGroup = L.markerClusterGroup({
+                maxClusterRadius: 50, // Jangkauan radius pengelompokan
+                disableClusteringAtZoom: 17, // Pada zoom 17, cluster otomatis pecah jadi marker icon
+                spiderfyOnMaxZoom: true,
+                showCoverageOnHover: false,
+                zoomToBoundsOnClick: true,
+                iconCreateFunction: function(cluster) {
+                    let count = cluster.getChildCount();
+                    let c = ' marker-cluster-';
+                    if (count < 5) {
+                        c += 'small'; // < 5 titik warnanya kuning
+                    } else if (count < 15) {
+                        c += 'medium'; // < 15 titik warnanya merah muda
+                    } else {
+                        c += 'large'; // >= 15 titik warnanya merah tua
+                    }
+                    return new L.DivIcon({ 
+                        html: '<div><span>' + count + '</span></div>', 
+                        className: 'marker-cluster custom-cluster' + c, 
+                        iconSize: new L.Point(40, 40) 
+                    });
+                }
+            });
+
             propertiLayer = L.geoJSON(propertiGeoJSON, {
                 pointToLayer: function (feature, latlng) {
-                    // custom icon marker jadi bulet merah
                     let iconProperti = L.divIcon({ className: 'marker-properti', html: '<div class="marker-properti"><i class="fas fa-store"></i></div>', iconSize: [0, 0], iconAnchor: [0, 0]});
                     return L.marker(latlng, { icon: iconProperti });
                 },
                 onEachFeature: function (feature, layer) {
-                    allMarkers.push(layer); // simpan ke array buat filter
+                    allMarkers.push(layer); 
 
                     let props = feature.properties;
                     let namaJalan = (props['Nama Jln'] || props.Nama_Jln || "-");
                     let jenisProperti = (props.Jenisprope || "-"); 
                     let namaFoto = props.foto || props.FOTO; 
 
-                    // build isi html buat popupnya
                     let popupContent = `<div class="popup-custom">`;
-                    
                     if (namaFoto) {
                         popupContent += `<div class="popup-img-container"><img src="foto/${namaFoto}" class="popup-img" title="Klik untuk memperbesar foto" onclick="openLightbox(this.src)" onerror="this.parentElement.style.display='none';"></div>`;
                     }
-                    
                     popupContent += `<table style="width: 100%; border-collapse: collapse;">`;
-                    
                     for (let key in props) {
                         let lowerKey = key.toLowerCase();
-                        // tampilin semua atribut kecuali kolom foto dan nama (biar gak dobel)
                         if (lowerKey !== 'foto' && lowerKey !== 'nama' && props[key] !== null && props[key] !== '') {
                             let labelTampil = aliasField[lowerKey] || key;
                             popupContent += `<tr style="border-bottom: 1px solid #eee;"><td class="attribute-key">${labelTampil}</td><td class="attribute-value">${props[key]}</td></tr>`;
@@ -135,7 +157,6 @@ async function loadMapData() {
                     
                     let titikTengah = layer.getLatLng ? layer.getLatLng() : layer.getBounds().getCenter();
                     
-                    // nyimpen info spesifik tiap titik biar gampang diakses waktu user nge-filter di search bar
                     layer.featureData = {
                         jalanAsli: namaJalan,
                         jenisAsli: jenisProperti,
@@ -144,14 +165,17 @@ async function loadMapData() {
                         titik: titikTengah
                     };
                 }
-            }).addTo(map);
+            });
+
+            // PERUBAHAN: Masukkan propertiLayer ke dalam cluster, lalu cluster ke map
+            clusterGroup.addLayer(propertiLayer);
+            map.addLayer(clusterGroup);
 
             // zoom map biar ngepas ke semua titik properti
             if (propertiLayer.getBounds().isValid()) {
                 map.fitBounds(propertiLayer.getBounds());
             }
 
-            // jalanin fungsi buat dropdown kalau datanya udah selesai diload
             setupDropdown('searchJalan', 'dropdownJalan', 'jalan', 'fa-road');
             setupDropdown('searchJenis', 'dropdownJenis', 'jenis', 'fa-tag');
         }
@@ -212,27 +236,31 @@ function filterMap() {
     
     let visibleBounds = L.latLngBounds();
     let hasVisibleMarkers = false;
+    let filteredMarkers = []; // Tampung marker yang lolos filter
+
+    // Bersihkan semua titik di dalam cluster
+    clusterGroup.clearLayers();
 
     allMarkers.forEach(marker => {
         const data = marker.featureData;
         const cocokJalan = (queryJalan === '' || data.jalan.includes(queryJalan));
         const cocokJenis = (queryJenis === '' || data.jenis.includes(queryJenis));
 
-        // kalau cocok dua-duanya, tampilin titiknya. kalau enggak, hapus dari view
+        // Kalau cocok, masukkan ke array penampung
         if (cocokJalan && cocokJenis) {
-            if (!map.hasLayer(marker)) map.addLayer(marker);
+            filteredMarkers.push(marker);
             visibleBounds.extend(data.titik);
             hasVisibleMarkers = true;
-        } else {
-            if (map.hasLayer(marker)) map.removeLayer(marker);
         }
     });
 
-    // auto zoom ke area titik-titik hasil pencarian
+    // Masukkan kembali HANYA marker yang lolos filter ke dalam grup cluster
+    clusterGroup.addLayers(filteredMarkers);
+
+    // Auto zoom ke area titik-titik hasil pencarian
     if (hasVisibleMarkers && (queryJalan !== '' || queryJenis !== '')) {
         map.fitBounds(visibleBounds, { padding: [50, 50], maxZoom: 17, duration: 1.0 });
     } else if (queryJalan === '' && queryJenis === '') {
-        // balikin zoom ke awal kalau inputan kosong semua
         if (propertiLayer && propertiLayer.getBounds().isValid()) {
             map.fitBounds(propertiLayer.getBounds(), { duration: 1.0 });
         }
