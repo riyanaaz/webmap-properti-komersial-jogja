@@ -135,25 +135,42 @@ body, html {
     background: transparent; border: none;
 }
 
-/* Desain lingkaran markernya */
-.marker-properti {
-    width: 20px; /* Ukuran pas seperti aslinya */
-    height: 20px;
-    background-color: #ffffff; 
-    border: 1px solid var(--primary-red); 
-    border-radius: 50%; 
-    color: var(--primary-red); 
-    display: flex; justify-content: center; align-items: center;
-    font-size: 10px; /* Ukuran icon toko di dalamnya */
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3); 
-    transition: all 0.2s ease; 
+/* =========================================
+   DESAIN ICON PROPERTI (ANTI BUG KLIK)
+========================================= */
+.wrapper-marker-ku {
+    background: transparent;
+    border: none;
 }
 
-.marker-properti:hover { 
-    transform: scale(1.3); /* Hanya membesar sedikit saat disentuh/dihove mouse */
+.bulatan-marker {
+    width: 24px; 
+    height: 24px;
+    background-color: #ffffff; 
+    border: 2px solid var(--primary-red); 
+    border-radius: 50%; 
+    color: var(--primary-red); 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    font-size: 11px; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3); 
+    transition: all 0.2s ease;
+    
+    /* PENTING: Mencegah elemen ini memblokir klik, sehingga klik tembus ke wrapper Leaflet */
+    pointer-events: none; 
+}
+
+/* Efek membesar saat marker disentuh kursor */
+.wrapper-marker-ku:hover .bulatan-marker { 
+    transform: scale(1.3);
     background-color: var(--primary-red); 
     color: #ffffff; 
-    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(153, 0, 0, 0.4);
+}
+
+/* Memastikan marker yang sedang di-hover berada paling atas */
+.wrapper-marker-ku:hover {
     z-index: 1000 !important;
 }
 
