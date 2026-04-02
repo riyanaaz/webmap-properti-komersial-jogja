@@ -98,9 +98,9 @@ async function loadMapData() {
             
             // Inisialisasi Marker Cluster dengan kustomisasi CSS
             markerClusterGroup = L.markerClusterGroup({
+                disableClusteringAtZoom: 19, // PENTING: Memaksa cluster pecah jadi icon asli saat di-zoom maksimal
                 iconCreateFunction: function(cluster) {
                     let childCount = cluster.getChildCount();
-                    // Mengubah ukuran bulatan cluster berdasarkan jumlah titik
                     let size = childCount < 10 ? 35 : childCount < 30 ? 45 : 55;
                     return new L.DivIcon({
                         html: '<div><span>' + childCount + '</span></div>',
@@ -115,27 +115,31 @@ async function loadMapData() {
 
             propertiLayer = L.geoJSON(propertiGeoJSON, {
                 pointToLayer: function (feature, latlng) {
-                    // custom icon marker jadi bulet merah
-                    let iconProperti = L.divIcon({ className: 'marker-properti', html: '<div class="marker-properti"><i class="fas fa-store"></i></div>', iconSize: [0, 0], iconAnchor: [0, 0]});
+                    // PENTING: Memberikan ukuran iconSize agar marker bisa diklik dan popupAnchor agar posisi popup pas di atas marker
+                    let iconProperti = L.divIcon({ 
+                        className: 'custom-div-wrapper', // Nama class pembungkus dikosongkan agar tidak bentrok
+                        html: '<div class="marker-properti"><i class="fas fa-store"></i></div>', 
+                        iconSize: [20, 20], 
+                        iconAnchor: [10, 10], 
+                        popupAnchor: [0, -10] 
+                    });
                     return L.marker(latlng, { icon: iconProperti });
                 },
                 onEachFeature: function (feature, layer) {
-                    allMarkers.push(layer); // simpan ke array buat filter
-
+                    allMarkers.push(layer); 
+                    
+                    // ... (Kode untuk props, nama jalan, foto di dalam sini TETAP SAMA seperti sebelumnya) ...
+                    
                     let props = feature.properties;
                     let namaJalan = (props['Nama Jln'] || props.Nama_Jln || "-");
                     let jenisProperti = (props.Jenisprope || "-"); 
                     let namaFoto = props.foto || props.FOTO; 
 
-                    // build isi html buat popupnya
                     let popupContent = `<div class="popup-custom">`;
-                    
                     if (namaFoto) {
                         popupContent += `<div class="popup-img-container"><img src="foto/${namaFoto}" class="popup-img" title="Klik untuk memperbesar foto" onclick="openLightbox(this.src)" onerror="this.parentElement.style.display='none';"></div>`;
                     }
-                    
                     popupContent += `<table style="width: 100%; border-collapse: collapse;">`;
-                    
                     for (let key in props) {
                         let lowerKey = key.toLowerCase();
                         if (lowerKey !== 'foto' && lowerKey !== 'nama' && props[key] !== null && props[key] !== '') {
@@ -145,23 +149,12 @@ async function loadMapData() {
                     }
                     popupContent += `</table></div>`;
                     
-                    layer.bindPopup(popupContent, {
-                        autoPanPaddingTopLeft: [20, 140], 
-                        autoPanPaddingBottomRight: [20, 20]
-                    });
+                    layer.bindPopup(popupContent, { autoPanPaddingTopLeft: [20, 140], autoPanPaddingBottomRight: [20, 20] });
                     
                     let titikTengah = layer.getLatLng ? layer.getLatLng() : layer.getBounds().getCenter();
-                    
-                    // nyimpen info spesifik tiap titik biar gampang diakses waktu user nge-filter
-                    layer.featureData = {
-                        jalanAsli: namaJalan,
-                        jenisAsli: jenisProperti,
-                        jalan: namaJalan.toLowerCase(),
-                        jenis: jenisProperti.toLowerCase(),
-                        titik: titikTengah
-                    };
+                    layer.featureData = { jalanAsli: namaJalan, jenisAsli: jenisProperti, jalan: namaJalan.toLowerCase(), jenis: jenisProperti.toLowerCase(), titik: titikTengah };
                 }
-            }); // Tidak pakai .addTo(map) di sini
+            });
 
             // Tambahkan layer titik properti ke dalam keranjang Cluster, lalu tambahkan ke map
             markerClusterGroup.addLayer(propertiLayer);
